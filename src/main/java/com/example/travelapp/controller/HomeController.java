@@ -53,8 +53,9 @@ public class HomeController {
         if (userId != null) {
             User user = userRepository.findById(userId).orElse(null);
             model.addAttribute("user", user);
+            return "home";
         }
-        return "index";
+        return "landing";
     }
 
     @GetMapping("/flights")
