@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Travel Buddy – Smart Travel Planner</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<!-- Navbar -->
+<header class="navbar">
+    <div class="nav-logo">
+        <span class="logo-icon">✈️</span>
+        <span class="logo-text">TravelBuddy</span>
+    </div>
+
+    <nav class="nav-links">
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/flights}">Flights</a>
+        <a th:href="@{/hotels}">Hotels</a>
+        <a th:href="@{/recommendations}">AI Recommendations</a>
+    </nav>
+
+    <div class="nav-auth">
+        <!-- If user is logged in -->
+        <span th:if="${user != null}">
+            Hi, <strong th:text="${user.username}">User</strong>
+            <a class="btn-outline" th:href="@{/logout}">Logout</a>
+        </span>
+
+        <!-- If user is NOT logged in -->
+        <span th:if="${user == null}">
+            <a class="btn-outline" th:href="@{/login}">Login</a>
+            <a class="btn-primary btn-small" th:href="@{/register}">Sign Up</a>
+        </span>
+    </div>
+</header>
+
+<!-- Hero section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Plan your next trip in one place.</h1>
+        <p>
+            Search flights, compare hotels, and get AI-powered travel recommendations
+            based on your preferences – all in a single platform.
+        </p>
+
+        <div class="hero-actions">
+            <a class="btn-primary" th:href="@{/flights}">Search Flights</a>
+            <a class="btn-secondary" th:href="@{/hotels}">Find Hotels</a>
+        </div>
+
+        <div class="hero-subtext">
+            <span>🎯 Personalized suggestions using your travel style & budget</span>
+        </div>
+    </div>
+
+    <div class="hero-image">
+        <div class="hero-card">
+            <h3>Smart Trip Snapshot</h3>
+            <ul>
+                <li>✈️ Return flight · Under RM1500</li>
+                <li>🏨 3–4★ hotel near city center</li>
+                <li>🧠 AI tips: local food, hidden gems, safety</li>
+            </ul>
+            <a class="btn-outline full-width" th:href="@{/recommendations}">
+                Get AI Recommendations
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Features section -->
+<section class="features">
+    <h2>What this system can do</h2>
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h3>Search Flights</h3>
+            <p>Browse available flights by origin & destination and compare prices easily.</p>
+            <a th:href="@{/flights}" class="feature-link">View flights →</a>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🏨</div>
+            <h3>Browse Hotels</h3>
+            <p>See hotel options with location, rating, price per night and facilities.</p>
+            <a th:href="@{/hotels}" class="feature-link">View hotels →</a>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3>AI Recommendations</h3>
+            <p>
+                Save your preferences (budget, travel style, interests) and let the system
+                suggest destinations & trip ideas.
+            </p>
+            <a th:href="@{/recommendations}" class="feature-link">Get recommendations →</a>
+        </div>
+    </div>
+</section>
+
+<!-- How it works -->
+<section class="steps">
+    <h2>How it works</h2>
+    <div class="step-grid">
+        <div class="step-card">
+            <span class="step-number">1</span>
+            <h3>Create an account</h3>
+            <p>Register & log in to save your bookings and preferences.</p>
+        </div>
+        <div class="step-card">
+            <span class="step-number">2</span>
+            <h3>Set your preferences</h3>
+            <p>
+                Choose preferred destinations, budget range and travel style.
+            </p>
+        </div>
+        <div class="step-card">
+            <span class="step-number">3</span>
+            <h3>Explore & book</h3>
+            <p>
+                View suggested flights and hotels, then proceed with booking.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA section -->
+<section class="cta">
+    <div class="cta-inner">
+        <h2>Ready to start planning?</h2>
+        <p>Log in or sign up to get a personalized travel experience.</p>
+        <div class="cta-actions" th:if="${user == null}">
+            <a class="btn-primary" th:href="@{/register}">Create Account</a>
+            <a class="btn-secondary" th:href="@{/login}">I already have an account</a>
+        </div>
+        <div class="cta-actions" th:if="${user != null}">
+            <a class="btn-primary" th:href="@{/recommendations}">See My Recommendations</a>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <p>© 2025 TravelBuddy · Final Year Project</p>
+</footer>
+
+</body>
+</html>

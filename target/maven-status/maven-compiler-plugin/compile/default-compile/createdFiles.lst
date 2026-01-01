@@ -1,0 +1,17 @@
+com\example\travelapp\controller\AdminController.class
+com\example\travelapp\repo\UserPreferenceRepository.class
+com\example\travelapp\service\DeepSeekService.class
+com\example\travelapp\model\UserPreference.class
+com\example\travelapp\model\Booking.class
+com\example\travelapp\model\Flight.class
+com\example\travelapp\repo\UserRepository.class
+com\example\travelapp\controller\HomeController.class
+com\example\travelapp\config\SampleDataLoader.class
+com\example\travelapp\model\User.class
+com\example\travelapp\repo\FlightRepository.class
+com\example\travelapp\repo\BookingRepository.class
+com\example\travelapp\config\AppConfig.class
+com\example\travelapp\controller\AuthController.class
+com\example\travelapp\model\Hotel.class
+com\example\travelapp\repo\HotelRepository.class
+com\example\travelapp\TravelAppApplication.class
