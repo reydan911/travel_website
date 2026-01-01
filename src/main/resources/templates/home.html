@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - TravelApp</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="/" class="logo">✈️ TravelApp</a>
+            <ul class="nav-links">
+            </ul>
+            <div class="user-info">
+                <span>Hi, <strong th:text="${user.username}"></strong>!</span>
+                <a href="/logout" class="btn-logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner">
+        <h2>🎉 Welcome back, <span th:text="${user.username}"></span>!</h2>
+        <p>Ready to plan your next adventure?</p>
+    </div>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        
+        <!-- Quick Actions -->
+        <section class="quick-actions">
+            <h3>Quick Actions</h3>
+            <div class="actions-grid">
+                <div class="action-card">
+                    <div class="action-icon">✈️</div>
+                    <h4>Book a Flight</h4>
+                    <p>Find and book flights to your dream destination</p>
+                    <a href="/flights">Browse Flights</a>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon">🏨</div>
+                    <h4>Book a Hotel</h4>
+                    <p>Discover amazing accommodations worldwide</p>
+                    <a href="/hotels">Find Hotels</a>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon">📋</div>
+                    <h4>My Bookings</h4>
+                    <p>View and manage your travel bookings</p>
+                    <a href="/my-bookings">View Bookings</a>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon">🎯</div>
+                    <h4>Get Recommendations</h4>
+                    <p>AI-powered travel suggestions just for you</p>
+                    <a href="/recommendations">Explore</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Recommendations Promo -->
+        <section class="recommendations-section">
+            <h3>🤖 Discover Personalized Travel Recommendations</h3>
+            <p>Let our AI suggest the perfect destinations, hotels, and experiences based on your preferences</p>
+            <a href="/recommendations">Get My Recommendations</a>
+        </section>
+
+        <!-- Recent Bookings (if you want to show them) -->
+        <!-- You can add this later when you implement the booking display -->
+        
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 TravelApp. All rights reserved.</p>
+            <p>Your trusted travel companion</p>
+        </div>
+    </footer>
+</body>
+</html>
