@@ -1,0 +1,18 @@
+@startuml
+title TRAVELBUDDY Booking Workflow (Simple)
+
+actor User
+participant "Controller" as Controller
+participant "Booking Service" as BookingService
+database "Database" as DB
+
+User -> Controller: Submit booking (flight or hotel)
+Controller -> BookingService: Create booking
+BookingService -> DB: Insert booking
+DB --> BookingService: Booking ID
+BookingService -> DB: Insert add-ons (optional)
+DB --> BookingService: Add-ons saved
+BookingService --> Controller: Booking confirmation
+Controller --> User: Show confirmation page
+
+@enduml

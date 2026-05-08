@@ -1,0 +1,186 @@
+TRAVELBUDDY STUDY GUIDE
+=======================
+
+1) PROJECT SUMMARY
+------------------
+TravelBuddy is a Spring Boot + Thymeleaf travel booking system. It lets users
+register/login, browse flights and hotels, view destination pages, book trips,
+manage bookings, and receive AI-assisted recommendations. All core data is stored
+in MySQL and loaded from SQL seeds. AI is optional and only generates a short
+summary; the matching logic is rule-based and DB-driven.
+
+2) TECH STACK
+------------
+- Backend: Spring Boot (MVC + Spring Data JPA)
+- Views: Thymeleaf templates + CSS
+- Database: MySQL
+- AI (optional): Groq API for summary text
+
+3) MAIN USER FLOWS (HIGH LEVEL)
+-------------------------------
+A) Visitor -> Landing
+   - Unauthenticated users see landing.html.
+   - Destinations list is loaded from /api/destinations.
+
+B) Login / Register
+   - AuthController sets session attributes (userId, username, role).
+
+C) Browse Flights
+   - HomeController -> FlightService -> FlightRepository
+   - Filtering with JPA Specifications: origin, destination, date, price.
+   - Results shown in flights.html.
+
+D) Browse Hotels
+   - HomeController -> HotelService -> HotelRepository
+   - Filtering with JPA Specifications: location, stars, price.
+   - Results shown in hotels.html.
+
+E) Destination Page
+   - DestinationController loads Destination by slug.
+   - Displays hero image, highlights, activities, and map embed.
+   - Search links pass only the city name to flights/hotels.
+
+F) Bookings
+   - BookingController -> BookingService.
+   - Books flights or hotels, applies add-ons, stores booking & booking_add_ons.
+   - Users can cancel bookings but cannot remove just the flight/hotel.
+   - Flexi Change allows one-time date change (flight or hotel) if add-on was bought.
+
+G) Recommendations (AI Suggestions)
+   - RecommendationController -> RecommendationService.
+   - Uses DB flights + hotels + user preferences + history.
+   - Anchors a chosen destination so flights/hotels match the same city.
+   - Optional Groq summary text.
+
+4) KEY CONTROLLERS (SERVER PAGES)
+---------------------------------
+- HomeController
+  - / (home or landing)
+  - /flights, /hotels
+  - /search-flights, /search-hotels
+
+- AuthController
+  - /login (GET/POST), /register (GET/POST), /logout
+
+- DestinationController
+  - /destination/{slug} (requires session login)
+
+- BookingController
+  - /bookings (list)
+  - /bookings/add (POST)
+  - /bookings/{id}/cancel (POST)
+  - /bookings/{id}/change-date (flight Flexi Change)
+  - /bookings/{id}/change-hotel-dates (hotel Flexi Change)
+
+- RecommendationController
+  - /recommendations (AI Suggestions page)
+
+- AdminController
+  - /admin (dashboard, add/update flights/hotels, remove cancelled bookings)
+
+- ChatController
+  - Optional AI chat-based recommendation endpoint
+
+5) API CONTROLLERS (JSON)
+--------------------------
+- /api/flights
+- /api/hotels
+- /api/destinations
+- /api/bookings
+
+These provide JSON data used by the frontend where needed (ex: landing page
+loads destinations using /api/destinations).
+
+6) SERVICES (BUSINESS LOGIC)
+-----------------------------
+- FlightService
+  - Filters flights with JPA Specifications.
+  - Supports sorting and pagination.
+
+- HotelService
+  - Filters hotels with JPA Specifications.
+  - Supports sorting and pagination.
+
+- BookingService
+  - Creates flight/hotel bookings.
+  - Applies add-ons and calculates totals.
+  - Manages seat/room availability.
+  - Flexi Change rules:
+    - Must have Flexi Change add-on.
+    - Can only be used once.
+    - Dates cannot be in the past.
+    - For hotels, the number of nights must stay the same.
+
+- RecommendationService
+  - DB-driven scoring and matching logic.
+  - Destination anchoring: flights + hotels must match same city.
+  - Optional trip bundles (flight + hotel) with total cost.
+
+- GroqService
+  - Optional AI summary generator (if API key is configured).
+
+- ChatService
+  - Uses RecommendationService for chat-based responses.
+
+7) DATABASE TABLES (CORE)
+--------------------------
+- users
+- flights
+- hotels
+- destinations
+- destination_highlights
+- destination_activities
+- bookings (flight or hotel bookings)
+- booking_add_ons
+- passengers
+- add_ons
+- user_preferences
+
+8) ADD-ONS AND FLEXI CHANGE
+----------------------------
+Add-ons are stored in add_ons and attached to bookings via booking_add_ons.
+Scopes:
+- FLIGHT: Flight-only add-ons
+- HOTEL: Hotel-only add-ons
+- BOTH: Applies to both
+
+Flexi Change is an add-on that allows a one-time date change:
+- Flights: change flight date, arrival adjusts by original flight duration.
+- Hotels: change check-in/out but must keep the same number of nights.
+
+9) AI USAGE (LIMITED)
+----------------------
+- Matching logic is NOT AI. It is deterministic and database-driven.
+- AI only produces a short summary text for explanations.
+- If Groq is disabled or fails, the system still works.
+
+10) WHERE DATA COMES FROM
+-------------------------
+- application.properties: DB connection + Hibernate settings
+- data.sql: seed data (users, flights, hotels, destinations, add-ons)
+- Hibernate uses ddl-auto=update to keep schema aligned with entities.
+
+11) IMPORTANT FILES TO READ
+----------------------------
+- src/main/java/.../controller/*
+- src/main/java/.../service/*
+- src/main/java/.../model/*
+- src/main/resources/templates/*.html
+- src/main/resources/data.sql
+- application.properties
+
+12) HOW LOGIN WORKS
+--------------------
+- Session-based (not Spring Security).
+- On login/register, session stores: userId, username, role.
+- Controllers check session to allow access to protected pages.
+
+13) COMMON TROUBLESHOOTING
+---------------------------
+- Booking errors usually come from:
+  - missing seats/rooms
+  - missing required dates
+  - invalid Flexi Change rules
+  - DB schema mismatch (column missing)
+
+If you want a shorter summary or a diagram-based walkthrough, tell me.

@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - TravelApp</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+</head>
+<body>
+    <!-- Navigation -->
+    <div th:replace="fragments/header :: user-header"></div>
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner">
+        <h2>&#x1F389; Welcome back, <span th:text="${user.username}"></span>!</h2>
+        <p>Ready to plan your next adventure?</p>
+    </div>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        
+        <!-- Quick Actions -->
+        <section class="quick-actions"
+                 th:if="${(user != null and user.role != 'ADMIN') or (session.role != null and session.role != 'ADMIN')}">
+            <h3>Quick Actions</h3>
+            <div class="actions-grid">
+                <div class="action-card">
+                    <div class="action-icon">&#x2708;&#xFE0F;</div>
+                    <h4>Book a Flight</h4>
+                    <p>Find and book flights to your dream destination</p>
+                    <a href="/flights">Browse Flights</a>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon">&#x1F3E8;</div>
+                    <h4>Book a Hotel</h4>
+                    <p>Discover amazing accommodations worldwide</p>
+                    <a href="/hotels">Find Hotels</a>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon">&#x1F4CB;</div>
+                    <h4>My Bookings</h4>
+                    <p>View and manage your travel bookings</p>
+                    <a href="/bookings">View Bookings</a>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon">&#x1F3AF;</div>
+                    <h4>Get Recommendations</h4>
+                    <p>AI-powered travel suggestions just for you</p>
+                    <a href="/recommendations">Explore</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Popular Destinations -->
+        <section class="popular-destinations">
+            <div class="section-header">
+                <h2>Popular Destinations</h2>
+                <p>Explore the world's most beautiful places</p>
+            </div>
+            <div class="destinations-grid" data-destinations-grid data-destinations-limit="6"></div>
+            <p class="destinations-status" data-destinations-status>Loading destinations...</p>
+        </section>
+
+        <!-- AI Recommendations Promo -->
+        <section class="recommendations-section">
+            <h3>&#x1F916; Discover Personalized Travel Recommendations</h3>
+            <p>Let our AI suggest the perfect destinations, hotels, and experiences based on your preferences</p>
+            <a href="/recommendations">Get My Recommendations</a>
+        </section>
+
+        <!-- Recent Bookings (if you want to show them) -->
+        <!-- You can add this later when you implement the booking display -->
+        
+    </div>
+
+    <!-- Footer -->
+    <div th:replace="fragments/footer :: site-footer"></div>
+
+    <script>
+        (() => {
+            const grid = document.querySelector("[data-destinations-grid]");
+            const status = document.querySelector("[data-destinations-status]");
+            if (!grid) {
+                return;
+            }
+
+            const limit = Number.parseInt(grid.dataset.destinationsLimit || "6", 10);
+            const endpoint = `/api/destinations?limit=${encodeURIComponent(limit)}`;
+
+            const setStatus = (text) => {
+                if (!status) {
+                    return;
+                }
+                status.textContent = text;
+                status.hidden = !text;
+            };
+
+            const buildCard = (destination) => {
+                const name = destination && destination.name ? destination.name : "Destination";
+                const subtitle = destination && destination.subtitle ? destination.subtitle : "Explore this destination.";
+                const imageUrl = destination && destination.imageUrl ? destination.imageUrl : "";
+
+                const card = document.createElement("div");
+                card.className = "destination-card";
+
+                const media = document.createElement("div");
+                media.className = "destination-image";
+                if (imageUrl) {
+                    const img = document.createElement("img");
+                    img.src = imageUrl;
+                    img.alt = name;
+                    media.appendChild(img);
+                } else {
+                    const fallback = document.createElement("span");
+                    fallback.className = "destination-fallback";
+                    fallback.textContent = name.split(",")[0] || name;
+                    media.appendChild(fallback);
+                }
+                card.appendChild(media);
+
+                const content = document.createElement("div");
+                content.className = "destination-content";
+
+                const title = document.createElement("h3");
+                title.textContent = name;
+                content.appendChild(title);
+
+                const summary = document.createElement("p");
+                summary.textContent = subtitle;
+                content.appendChild(summary);
+
+                const link = document.createElement("a");
+                link.className = "card-link";
+                link.href = destination && destination.slug ? `/destination/${destination.slug}` : "/flights";
+                link.textContent = "Explore ->";
+                content.appendChild(link);
+
+                card.appendChild(content);
+                return card;
+            };
+
+            setStatus("Loading destinations...");
+            fetch(endpoint)
+                .then((response) => (response.ok ? response.json() : Promise.reject(response.status)))
+                .then((data) => {
+                    grid.innerHTML = "";
+                    if (!Array.isArray(data) || data.length === 0) {
+                        setStatus("No destinations available yet.");
+                        return;
+                    }
+                    data.forEach((destination) => {
+                        grid.appendChild(buildCard(destination));
+                    });
+                    setStatus("");
+                })
+                .catch(() => {
+                    setStatus("Unable to load destinations right now.");
+                });
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="site-header">
+    <div class="container">
+        <a th:href="@{/}" class="logo">&#x2708;&#xFE0F; TravelBuddy</a>
+        <ul class="nav-links">
+            <li><a th:href="@{/}">Home</a></li>
+            <li><a th:href="@{/flights}">Flights</a></li>
+            <li><a th:href="@{/hotels}">Hotels</a></li>
+            <li th:if="${user != null and user.role == 'ADMIN'}"><a th:href="@{/admin}">Admin</a></li>
+            <li><a th:href="@{/recommendations}">AI Suggestions</a></li>
+            <li><a th:href="@{/bookings}">My Bookings</a></li>
+        </ul>
+        <div class="nav-actions">
+            <a th:href="@{/login}" class="btn-outline">Sign In</a>
+            <a th:href="@{/register}" class="btn-primary">Get Started</a>
+        </div>
+    </div>
+</nav>
+
+<nav th:fragment="landing-header" class="navbar">
+    <div class="nav-container">
+        <a href="/" class="logo">
+            <span class="logo-icon">&#x2708;&#xFE0F;</span>
+            <span class="logo-text">TravelBuddy</span>
+        </a>
+        <ul class="nav-menu">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#destinations">Destinations</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+        </ul>
+        <div class="nav-buttons">
+            <a href="/login" class="btn-nav-login">Sign In</a>
+            <a href="/register" class="btn-nav-signup">Get Started</a>
+        </div>
+    </div>
+</nav>
+
+<nav th:fragment="user-header">
+    <div class="container">
+        <a th:href="@{/}" class="logo">&#x2708;&#xFE0F; TravelBuddy</a>
+        <ul class="nav-links">
+            <li><a th:href="@{/}">Home</a></li>
+            <li><a th:href="@{/flights}">Flights</a></li>
+            <li><a th:href="@{/hotels}">Hotels</a></li>
+            <li th:if="${(user != null and user.role == 'ADMIN') or session.role == 'ADMIN'}"><a th:href="@{/admin}">Admin</a></li>
+            <li><a th:href="@{/recommendations}">AI Suggestions</a></li>
+            <li><a th:href="@{/bookings}">My Bookings</a></li>
+        </ul>
+        <div class="user-info">
+            <span>Hi, <strong th:text="${user != null ? user.username : (session.username != null ? session.username : 'Guest')}"></strong>!</span>
+            <a th:if="${user != null or session.username != null}" href="/logout" class="btn-logout">Logout</a>
+            <a th:if="${user == null and session.username == null}" href="/login" class="btn-outline">Sign In</a>
+        </div>
+    </div>
+</nav>
+
+<nav th:fragment="admin-header">
+    <div class="container">
+        <a th:href="@{/admin}" class="logo">&#x1F6E0;&#xFE0F; Admin</a>
+        <ul class="nav-links">
+            <li><a th:href="@{/admin}">Dashboard</a></li>
+        </ul>
+        <div class="user-info">
+            <span>Admin</span>
+            <a href="/logout" class="btn-logout">Logout</a>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

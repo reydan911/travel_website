@@ -1,0 +1,12 @@
+# Maven build output
+target/
+
+# IDE settings
+.vscode/
+
+# Local config with passwords / secrets
+src/main/resources/application.properties
+
+# OS junk
+.DS_Store
+Thumbs.db

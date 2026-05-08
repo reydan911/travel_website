@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap');
+
+.alert {
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.pagination .page-link {
+    border-radius: 999px;
+    margin: 0 4px;
+}
+
+.status-badge.status-confirmed {
+    background: rgba(16, 185, 129, 0.16);
+    color: #047857;
+}
+
+.status-badge.status-pending {
+    background: rgba(245, 158, 11, 0.2);
+    color: #92400e;
+}
+
+.status-badge.status-cancelled {
+    background: rgba(239, 68, 68, 0.2);
+    color: #b91c1c;
+}
+
+.pill-input {
+    border-radius: 999px;
+}
+
+.flight-addons summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.flight-addons-list {
+    margin-top: 0.4rem;
+    display: grid;
+    gap: 0.35rem;
+}
+
+.flight-addon-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+}

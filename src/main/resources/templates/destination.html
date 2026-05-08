@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${destination.name} + ' - TravelBuddy'">Destination - TravelBuddy</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/destination.css}">
+</head>
+<body class="page">
+
+<div th:replace="fragments/header :: user-header"></div>
+
+<main class="destination-main">
+    <section class="destination-hero" th:style="${destination.imageUrl != null ? 'background-image:url(' + destination.imageUrl + ');' : ''}">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <a th:href="@{/}" class="back-link">&larr; Back to destinations</a>
+            <div class="hero-title-block">
+                <h1 th:text="${destination.name}">Paris, France</h1>
+                <p class="subtitle" th:text="${destination.subtitle}">
+                    The City of Light awaits
+                </p>
+            </div>
+            <p class="description" th:text="${destination.description}">
+                A short description of the destination…
+            </p>
+            <div class="hero-actions">
+                <a th:href="@{|/search-flights?destination=${destinationCity != null ? destinationCity : ''}|}" class="btn-primary">Search flights</a>
+                <a th:href="@{|/search-hotels?location=${destinationCity != null ? destinationCity : ''}|}" class="btn-outline">Browse hotels</a>
+            </div>
+        </div>
+        <div class="hero-media" th:if="${destination.imageUrl == null}">
+            <div class="image-placeholder">
+                <span th:text="${destination.name}">Paris</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="destination-grid">
+        <div class="destination-card">
+            <div class="card-header">
+                <h2>Top things to do</h2>
+                <span class="card-subtitle">Highlights curated for this destination</span>
+            </div>
+            <ul class="highlight-list" th:if="${destination.highlights != null and !destination.highlights.isEmpty()}">
+                <li th:each="item : ${destination.highlights}" th:text="${item.text}">Example highlight</li>
+            </ul>
+            <p class="empty-text" th:if="${destination.highlights == null or destination.highlights.isEmpty()}">
+                Highlights are coming soon. Check back for updates.
+            </p>
+        </div>
+
+        <div class="destination-card map-card">
+            <div class="card-header">
+                <h2>Map</h2>
+            </div>
+            <div class="map-frame" th:if="${destination.mapEmbedUrl != null}">
+                <iframe
+                    title="Destination map"
+                    th:src="${destination.mapEmbedUrl}"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+            <p class="empty-text" th:if="${destination.mapEmbedUrl == null}">
+                Map preview unavailable. Use the city name in your maps app.
+            </p>
+        </div>
+    </section>
+
+    <section class="destination-activities">
+        <div class="section-header">
+            <h2>Activities &amp; spots</h2>
+            <p>Experiences, food, and culture you can plan around.</p>
+        </div>
+        <div class="activities-grid" th:if="${destination.activities != null and !destination.activities.isEmpty()}">
+            <article class="activity-card" th:each="activity : ${destination.activities}">
+                <div class="activity-media">
+                    <img th:if="${activity.imageUrl != null}" th:src="${activity.imageUrl}" th:alt="${activity.title}">
+                    <div class="activity-fallback" th:if="${activity.imageUrl == null}">
+                        <span th:text="${activity.title}">Activity</span>
+                    </div>
+                </div>
+                <div class="activity-body">
+                    <h3 th:text="${activity.title}">Activity title</h3>
+                    <p th:text="${activity.description}">Activity description</p>
+                </div>
+            </article>
+        </div>
+        <p class="empty-text" th:if="${destination.activities == null or destination.activities.isEmpty()}">
+            Activities are being curated. Explore the city highlights for now.
+        </p>
+    </section>
+
+    <section class="destination-cta">
+        <div class="cta-card">
+            <div>
+                <h2>Ready to go?</h2>
+                <p>
+                    Search for flights and hotels to
+                    <span th:text="${destinationCity != null && !#strings.isEmpty(destinationCity) ? destinationCity : destination.name}">this city</span>.
+                </p>
+            </div>
+            <div class="cta-buttons">
+                <a th:href="@{|/search-flights?destination=${destinationCity != null ? destinationCity : ''}|}" class="btn-primary">Search flights</a>
+                <a th:href="@{|/search-hotels?location=${destinationCity != null ? destinationCity : ''}|}" class="btn-outline">Browse hotels</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div th:replace="fragments/footer :: site-footer"></div>
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+.recommendations-page .summary-card {
+  background: #f8f9fb;
+  border: 1px solid #e6e9ef;
+}
+
+.recommendations-page .itinerary-card {
+  border: 1px solid #e6e9ef;
+}
+
+.itinerary-text {
+  white-space: pre-line;
+}
+
+.recommendation-card .price-tag {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.recommendation-card .reason-list {
+  padding-left: 1.1rem;
+  margin-bottom: 0;
+  color: #5f6b78;
+  font-size: 0.9rem;
+}
+
+.recommendation-card .reason-list li {
+  margin-bottom: 0.25rem;
+}
+
+.booking-inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.booking-inline-form .form-control-sm {
+  min-width: 140px;
+}
+
+.amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.amenities .amenity-tag {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.5rem;
+}
+
+.empty-state {
+  padding: 1.5rem;
+  border: 1px dashed #d0d7de;
+  border-radius: 0.75rem;
+  color: #6c757d;
+  background: #fafbfc;
+}

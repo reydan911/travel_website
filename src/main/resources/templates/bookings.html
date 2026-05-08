@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - TravelBuddy</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/bookings.css}">
+</head>
+<body class="bookings-page">
+<div th:replace="fragments/header :: user-header"></div>
+
+<main class="bookings-shell">
+    <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
+    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
+    <section class="bookings-hero">
+        <div class="hero-copy">
+            <span class="hero-eyebrow">My Trips</span>
+            <h1>Your bookings at a glance.</h1>
+            <p>Review trip details, traveler info, and extras in one dashboard.</p>
+        </div>
+        <div class="hero-actions">
+            <a th:href="@{/flights}" class="primary-button">Browse Flights</a>
+            <a th:href="@{/hotels}" class="secondary-button">Browse Hotels</a>
+        </div>
+    </section>
+
+    <div class="empty-state" th:if="${bookings == null or #lists.isEmpty(bookings)}">
+        You do not have any bookings yet. Start with Flights or Hotels to create one.
+    </div>
+
+    <section class="bookings-grid" th:if="${bookings != null and !#lists.isEmpty(bookings)}">
+        <article class="booking-card" th:each="b : ${bookings}" th:id="|bookingCard__${b.id}|">
+            <div class="card-header">
+                <div>
+                    <span class="booking-code" th:text="${b.bookingReference != null ? b.bookingReference : 'TRV-PENDING'}">TRV-000000</span>
+                    <h3 th:text="${b.bookingType != null ? #strings.capitalize(b.bookingType.toString().toLowerCase()) : 'Trip'}">Trip</h3>
+                    <p class="booking-route" th:if="${b.flight != null}">
+                        <span th:text="${b.flight.origin}">Origin</span> to
+                        <span th:text="${b.flight.destination}">Destination</span>
+                    </p>
+                    <p class="booking-route" th:if="${b.hotel != null}" th:text="${b.hotel.name}">Hotel</p>
+                </div>
+                <span class="status-badge"
+                      th:classappend="${b.status != null ? ' status-' + #strings.toLowerCase(b.status.toString()) : ''}"
+                      th:text="${b.status != null ? #strings.capitalize(b.status.toString().toLowerCase()) : 'Confirmed'}">Confirmed</span>
+            </div>
+
+            <div class="card-body">
+                <div class="trip-details" th:if="${b.flight != null}">
+                    <h4>Flight</h4>
+                    <p class="muted">Flight #: <span th:text="${b.flight.flightNumber}">FN123</span></p>
+                    <p class="muted">
+                        Departure:
+                        <span th:text="${b.effectiveDepartureTime != null ? #temporals.format(b.effectiveDepartureTime, 'dd MMM yyyy') : (b.flightDate != null ? #temporals.format(b.flightDate, 'dd MMM yyyy') : 'TBD')}">Date</span>
+                        <span th:if="${b.effectiveDepartureTime != null}"
+                              th:text="${' - ' + #temporals.format(b.effectiveDepartureTime, 'HH:mm')}"> - 00:00</span>
+                    </p>
+                    <p class="muted" th:if="${b.effectiveArrivalTime != null}">
+                        Arrival:
+                        <span th:text="${#temporals.format(b.effectiveArrivalTime, 'dd MMM yyyy')}">Date</span>
+                        <span th:text="${' - ' + #temporals.format(b.effectiveArrivalTime, 'HH:mm')}"> - 00:00</span>
+                    </p>
+                    <p class="muted" th:if="${b.flightDate != null and b.flight.departureTime != null and b.flightDate != b.flight.departureTime.toLocalDate()}">
+                        Updated date applied (Flexi Change)
+                    </p>
+                    <form class="mt-2"
+                          th:if="${b.status != null and b.status.toString() == 'CONFIRMED' and !b.flexiChangeUsed and b.addOns != null and !#lists.isEmpty(b.addOns.?[addOn != null and #strings.equalsIgnoreCase(addOn.name, 'Flexi Change')])}"
+                          th:action="@{|/bookings/${b.id}/change-date|}" method="post">
+                        <label class="muted small d-block mb-1">Change date (Flexi Change)</label>
+                        <div class="d-flex flex-column gap-2">
+                            <input type="date" name="newFlightDate" class="form-control form-control-sm" required>
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Update Date</button>
+                        </div>
+                    </form>
+                    <p class="muted small mt-2"
+                       th:if="${b.status != null and b.status.toString() == 'CONFIRMED' and b.flexiChangeUsed}">
+                        Flexi Change already used.
+                    </p>
+                </div>
+
+                <div class="trip-details" th:if="${b.hotel != null}">
+                    <h4>Hotel</h4>
+                    <p class="muted" th:text="${b.hotel.location}">Location</p>
+                    <p class="muted">Check-in:
+                        <span th:text="${b.checkInDate != null ? #temporals.format(b.checkInDate, 'dd MMM yyyy') : 'Flexible'}">Date</span>
+                    </p>
+                    <p class="muted">Check-out:
+                        <span th:text="${(b.checkInDate != null and b.hotelNights != null) ? #temporals.format(b.checkInDate.plusDays(b.hotelNights), 'dd MMM yyyy') : 'Flexible'}">Date</span>
+                    </p>
+                    <p class="muted">Nights: <span th:text="${b.hotelNights != null ? b.hotelNights : 'N/A'}">N/A</span></p>
+                    <form class="mt-2 flexi-hotel-form"
+                          th:if="${b.status != null and b.status.toString() == 'CONFIRMED' and !b.flexiChangeUsed and b.addOns != null and !#lists.isEmpty(b.addOns.?[addOn != null and #strings.equalsIgnoreCase(addOn.name, 'Flexi Change')])}"
+                          th:action="@{|/bookings/${b.id}/change-hotel-dates|}" method="post"
+                          th:attr="data-nights=${b.hotelNights != null ? b.hotelNights : 1}">
+                        <label class="muted small d-block mb-1">Change dates (Flexi Change)</label>
+                        <div class="d-flex flex-column gap-2">
+                            <input type="date" name="newCheckIn" class="form-control form-control-sm" required>
+                            <input type="date" name="newCheckOut" class="form-control form-control-sm" required readonly>
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Update Dates</button>
+                        </div>
+                        <small class="text-muted d-block mt-1"
+                               th:text="${'Flexi Change keeps ' + (b.hotelNights != null ? b.hotelNights : 1) + ' night(s).'}">
+                            Flexi Change keeps the same nights.
+                        </small>
+                    </form>
+                    <p class="muted small mt-2"
+                       th:if="${b.status != null and b.status.toString() == 'CONFIRMED' and b.flexiChangeUsed}">
+                        Flexi Change already used.
+                    </p>
+                </div>
+
+                <div class="trip-details" th:if="${b.hotel == null and b.flight == null}">
+                    <h4>Trip</h4>
+                    <p class="muted">Trip details are not available for this booking.</p>
+                </div>
+
+                <div class="trip-meta">
+                    <div>
+                        <span class="meta-label"
+                              th:text="${b.hotel != null and b.flight == null ? 'Pax' : 'Passengers'}">Passengers</span>
+                        <span class="meta-value"
+                              th:text="${b.passengerCount != null ? b.passengerCount : (b.passengers != null ? b.passengers.size() : 'N/A')}">0</span>
+                    </div>
+                    <div>
+                        <span class="meta-label">Booked</span>
+                        <span class="meta-value" th:text="${b.bookingDate != null ? #temporals.format(b.bookingDate, 'dd/MM/yyyy HH:mm') : 'N/A'}">N/A</span>
+                    </div>
+                    <div>
+                        <span class="meta-label">Total</span>
+                        <span class="meta-value" th:text="${b.totalPrice != null ? 'RM ' + b.totalPrice : 'N/A'}">0</span>
+                    </div>
+                    <div>
+                        <span class="meta-label">Price breakdown</span>
+                        <span class="meta-value" th:text="${b.totalPrice != null ? 'RM ' + b.totalPrice : 'N/A'}">N/A</span>
+                        <span class="meta-sub" th:if="${b.flight != null and b.flight.price != null}"
+                              th:text="${'Flight: RM ' + b.flight.price}">Flight: RM 0</span>
+                        <span class="meta-sub" th:if="${b.hotel != null and b.hotel.pricePerNight != null}">
+                            <span th:text="${'Hotel: RM ' + b.hotel.pricePerNight}">Hotel: RM 0</span>
+                            <span th:if="${b.hotelNights != null}" th:text="${' x ' + b.hotelNights + ' nights'}"> x 1 nights</span>
+                        </span>
+                        <span class="meta-sub" th:if="${b.addOns != null and !b.addOns.isEmpty()}">
+                            Extras:
+                            <span th:each="addon, iter : ${b.addOns}">
+                                <span th:text="${addon.addOn != null ? addon.addOn.name : 'Add-on'}">Add-on</span>
+                                <span th:text="${addon.quantity != null ? ' x ' + addon.quantity : ''}"></span>
+                                <span th:text="${addon.unitPrice != null ? ' @ RM ' + addon.unitPrice : ''}"></span>
+                                <span th:text="${addon.lineTotal != null ? ' = RM ' + addon.lineTotal : ''}"></span>
+                                <span th:if="${!iter.last}">, </span>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="addons-block" th:if="${b.passengers != null and !b.passengers.isEmpty()}">
+                    <h5>Passengers</h5>
+                    <div class="addons-list" th:if="${b.passengers != null and !b.passengers.isEmpty()}">
+                        <div class="addon-item" th:each="p : ${b.passengers}">
+                            <span th:text="${p.fullName}">Passenger</span>
+                            <span th:text="${p.passengerType != null ? p.passengerType : 'Traveler'}">Traveler</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="addons-block">
+                    <h5>Extras</h5>
+                    <div class="addons-list" th:if="${b.addOns != null and !b.addOns.isEmpty()}">
+                        <div class="addon-item" th:each="addon : ${b.addOns}">
+                            <span th:text="${addon.addOn != null ? addon.addOn.name : 'Add-on'}">Add-on</span>
+                            <span th:text="${addon.quantity != null ? 'x' + addon.quantity : ''}">x1</span>
+                        </div>
+                    </div>
+                    <p class="muted" th:if="${b.addOns == null or b.addOns.isEmpty()}">No extras selected.</p>
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <form th:if="${b.status != null and b.status.toString() == 'CONFIRMED'}"
+                      th:action="@{|/bookings/${b.id}/cancel|}" method="post">
+                    <button type="submit" class="ghost-button">Cancel Booking</button>
+                </form>
+            </div>
+        </article>
+    </section>
+</main>
+
+<div th:replace="fragments/footer :: site-footer"></div>
+<script>
+    (() => {
+        const forms = document.querySelectorAll(".flexi-hotel-form");
+        if (!forms.length) {
+            return;
+        }
+        const formatDate = (date) => date.toISOString().slice(0, 10);
+        forms.forEach((form) => {
+            const nights = Math.max(1, Number.parseInt(form.dataset.nights || "1", 10));
+            const checkInInput = form.querySelector('input[name="newCheckIn"]');
+            const checkOutInput = form.querySelector('input[name="newCheckOut"]');
+            if (!checkInInput || !checkOutInput) {
+                return;
+            }
+            const updateCheckOut = () => {
+                if (!checkInInput.value) {
+                    checkOutInput.value = "";
+                    return;
+                }
+                const start = new Date(checkInInput.value);
+                if (Number.isNaN(start.getTime())) {
+                    checkOutInput.value = "";
+                    return;
+                }
+                start.setDate(start.getDate() + nights);
+                checkOutInput.value = formatDate(start);
+            };
+            checkInInput.addEventListener("change", updateCheckOut);
+            updateCheckOut();
+        });
+    })();
+</script>
+</body>
+</html>

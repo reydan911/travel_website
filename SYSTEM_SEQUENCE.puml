@@ -1,0 +1,19 @@
+@startuml
+title TRAVELBUDDY Recommendation Summary Sequence
+
+actor User
+participant "Controller" as Controller
+participant "Recommendation Service" as Service
+database "Database" as DB
+participant "AI Service (Groq)" as AI
+
+User -> Controller: Submit AI Suggestions form
+Controller -> Service: Build recommendations
+Service -> DB: Query flights/hotels/preferences
+DB --> Service: Matching data
+Service -> AI: Generate natural-language summary
+AI --> Service: Summary text
+Service --> Controller: Recommendations + summary
+Controller --> User: Render results page
+
+@enduml

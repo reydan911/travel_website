@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelBuddy - Explore the World</title>
+    <link rel="stylesheet" th:href="@{/css/landing.css}">
+</head>
+<body>
+<div th:replace="fragments/header :: landing-header"></div>
+
+<section class="hero" id="home">
+    <div class="hero-background"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <span class="hero-eyebrow">TRAVEL SMARTER</span>
+                <h1 class="hero-title">Curated journeys that feel made for you.</h1>
+                <p class="hero-subtitle">Discover destinations, secure the best flights and stays, and build an itinerary that fits your pace.</p>
+                <div class="hero-buttons">
+                    <a href="/register" class="btn-hero-primary">Start planning</a>
+                    <a href="#features" class="btn-hero-secondary">See how it works</a>
+                </div>
+            </div>
+            <div class="hero-card">
+                <span class="hero-card-header">THIS WEEK</span>
+                <h3>Plan a multi-stop escape in minutes</h3>
+                <ul class="hero-card-list">
+                    <li>Smart travel recommendations using your preferences and Groq AI</li>
+                    <li>Search flights and hotels with filters (region, budget, travel style)</li>
+                    <li>Book and review your trip history in My Bookings</li>
+                </ul>
+                <a href="#destinations" class="hero-card-link">Browse popular routes -></a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features-section" id="features">
+    <div class="section-container">
+        <div class="section-header">
+            <h2>Why travelers love TravelBuddy</h2>
+            <p>Everything you need to move from dreaming to booked.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-box">
+                <div class="feature-icon">MATCH</div>
+                <h3>Preference-based matching</h3>
+                <p>Flights and hotels are matched using rule-based logic based on destination, budget, and travel style to ensure consistent recommendations.</p>
+            </div>
+            <div class="feature-box">
+                <div class="feature-icon">BOOK</div>
+                <h3>Integrated booking management</h3>
+                <p>Users can book selected flights and hotels and manage their trip history in one place through the My Bookings feature.</p>
+            </div>
+            <div class="feature-box">
+                <div class="feature-icon">EXPLAIN</div>
+                <h3>AI-assisted explanations</h3>
+                <p>Groq AI provides clear explanations on why each flight or hotel is recommended, improving transparency and user confidence.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="destinations-section" id="destinations">
+    <div class="section-container">
+        <div class="section-header">
+            <h2>Handpicked destinations</h2>
+            <p>Capture the feeling of your next adventure.</p>
+        </div>
+        <div class="destinations-grid" data-destinations-grid data-destinations-limit="4"></div>
+        <p class="destinations-status" data-destinations-status>Loading destinations...</p>
+    </div>
+</section>
+
+<section class="how-it-works-section" id="how-it-works">
+    <div class="section-container">
+        <div class="section-header">
+            <h2>How it works</h2>
+            <p>Plan, customize, and book with confidence.</p>
+        </div>
+        <div class="steps-grid">
+            <div class="step-box">
+                <div class="step-number">1</div>
+                <h3>Tell us your vibe</h3>
+                <p>Share your destination ideas, budget, and travel style. We will surface the best matches.</p>
+            </div>
+            <div class="step-box">
+                <div class="step-number">2</div>
+                <h3>Build your itinerary</h3>
+                <p>Mix flights, stays, and activities into a cohesive plan with transparent pricing.</p>
+            </div>
+            <div class="step-box">
+                <div class="step-number">3</div>
+                <h3>Book in one place</h3>
+                <p>Confirm your trip and keep everything organized with TravelBuddy updates.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="cta-content">
+        <h2>Your next adventure starts here</h2>
+        <p>Create an account to unlock smart recommendations, curated itineraries, and seamless bookings.</p>
+        <a class="btn-cta" href="/register">Get started</a>
+    </div>
+</section>
+
+<footer class="site-footer">
+    <div class="footer-content">
+        <div class="footer-brand">
+            <a href="/" class="footer-logo">TravelBuddy</a>
+            <p>Plan dream trips with clarity, confidence, and a little inspiration.</p>
+        </div>
+        <div class="footer-column">
+            <h4>Explore</h4>
+            <ul>
+                <li><a href="/flights">Flights</a></li>
+                <li><a href="/hotels">Hotels</a></li>
+                <li><a href="/recommendations">AI Suggestions</a></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h4>Company</h4>
+            <ul>
+                <li><span>About us</span></li>
+                <li><span>Careers</span></li>
+                <li><span>Contact</span></li>
+            </ul>
+        </div>
+        <div class="footer-column">
+            <h4>Support</h4>
+            <ul>
+                <li><span>Help center</span></li>
+                <li><span>Terms &amp; privacy</span></li>
+                <li><span>Travel safety</span></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>TravelBuddy &copy; 2025</span>
+        <span>Crafted for curious travelers</span>
+    </div>
+</footer>
+
+<script>
+    (() => {
+        const grid = document.querySelector("[data-destinations-grid]");
+        const status = document.querySelector("[data-destinations-status]");
+        if (!grid) {
+            return;
+        }
+
+        const limit = Number.parseInt(grid.dataset.destinationsLimit || "4", 10);
+        const endpoint = `/api/destinations?limit=${encodeURIComponent(limit)}`;
+
+        const setStatus = (text) => {
+            if (!status) {
+                return;
+            }
+            status.textContent = text;
+            status.hidden = !text;
+        };
+
+        const buildCard = (destination) => {
+            const name = destination && destination.name ? destination.name : "Destination";
+            const subtitle = destination && destination.subtitle ? destination.subtitle : "Plan your next escape.";
+            const imageUrl = destination && destination.imageUrl ? destination.imageUrl : "";
+            const shortName = name.split(",")[0] || name;
+
+            const card = document.createElement("div");
+            card.className = "destination-card";
+
+            const media = document.createElement("div");
+            media.className = "destination-image";
+            if (imageUrl) {
+                const img = document.createElement("img");
+                img.src = imageUrl;
+                img.alt = name;
+                media.appendChild(img);
+            } else {
+                const fallback = document.createElement("span");
+                fallback.className = "destination-fallback";
+                fallback.textContent = shortName;
+                media.appendChild(fallback);
+            }
+            card.appendChild(media);
+
+            const content = document.createElement("div");
+            content.className = "destination-content";
+
+            const title = document.createElement("h3");
+            title.textContent = name;
+            content.appendChild(title);
+
+            const summary = document.createElement("p");
+            summary.textContent = subtitle;
+            content.appendChild(summary);
+
+            const link = document.createElement("a");
+            link.className = "card-link";
+            link.href = "/register";
+            link.textContent = `Explore ${shortName} ->`;
+            content.appendChild(link);
+
+            card.appendChild(content);
+            return card;
+        };
+
+        setStatus("Loading destinations...");
+        fetch(endpoint)
+            .then((response) => (response.ok ? response.json() : Promise.reject(response.status)))
+            .then((data) => {
+                grid.innerHTML = "";
+                if (!Array.isArray(data) || data.length === 0) {
+                    setStatus("No destinations available yet.");
+                    return;
+                }
+                data.forEach((destination) => {
+                    grid.appendChild(buildCard(destination));
+                });
+                setStatus("");
+            })
+            .catch(() => {
+                setStatus("Unable to load destinations right now.");
+            });
+    })();
+</script>
+
+<script>
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener('click', function (event) {
+            event.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>
